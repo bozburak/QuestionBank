@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace QuestionBankProject.Interfaces
 {
-    internal class Question : IQuestion, IComparable
+    internal class OldQuestion : IOldQuestion, IComparable
     {
         private static int sequence = 1;
         public int Id { get; set; }
@@ -15,11 +15,11 @@ namespace QuestionBankProject.Interfaces
         public string QuestionType { get; set; }
 
         // (polymorphism) overload example with ctor
-        public Question()
+        public OldQuestion()
         {
         }
 
-        public Question(string questionText, List<string> answers, List<string> correctAnswers, int point, string difficulty, string questionType)
+        public OldQuestion(string questionText, List<string> answers, List<string> correctAnswers, int point, string difficulty, string questionType)
         {
             Id = sequence;
             QuestionText = questionText;
@@ -33,7 +33,7 @@ namespace QuestionBankProject.Interfaces
 
         public int CompareTo(object obj)
         {
-            Question question = obj as Question;
+            OldQuestion question = obj as OldQuestion;
             int result = 0;
             if (question != null)
             {

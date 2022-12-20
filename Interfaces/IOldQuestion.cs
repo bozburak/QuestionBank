@@ -3,7 +3,7 @@ using static QuestionBankProject.Enumeration;
 
 namespace QuestionBankProject.Interfaces
 {
-    internal interface IQuestion
+    internal interface IOldQuestion
     {
         public int Id { get; set; }
         public string QuestionText { get; set; }

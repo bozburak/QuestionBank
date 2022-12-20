@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using QuestionBankProject.Concrete.DesignPatterns;
 using QuestionBankProject.Interfaces;
+using QuestionBankProject.Interfaces.DesignPatterns;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,17 @@ namespace QuestionBankProject
     {
         internal static void Main(string[] args)
         {
+            #region Example Generate Use Factory Methods
+
+            QuestionGenerater creater = new QuestionGenerater();
+            IQuestion classicQuestion = creater.FactoryMethod(QuestionType.Classic);
+            IQuestion trueFalseQuestion = creater.FactoryMethod(QuestionType.TrueFalse);
+
+            classicQuestion.Generate("example Question", new List<string>() { "example" }, new List<string>() { "example" }, 10, Enumeration.Difficulty.Medium.ToString());
+            trueFalseQuestion.Generate("example Question 2", new List<string>() { "example 2" }, new List<string>() { "example 2" }, 10, Enumeration.Difficulty.Medium.ToString());
+
+            #endregion Example Generate Use Factory Methods
+
             WriteToConsole("Question Bank");
 
             string answer = string.Empty;
@@ -47,7 +60,7 @@ namespace QuestionBankProject
                     WriteToConsole("Write question difficulty (Low, Medium, High)");
                     var difficulty = Console.ReadLine();
 
-                    var newQuestion = new Question(text, questionAnswer.Split(',').ToList(), questionCorrectAnswer.Split(',').ToList(), Convert.ToInt32(point), Enum.Parse<Difficulty>(difficulty, true).ToString(), Enum.Parse<QuestionType>(questionType, true).ToString());
+                    var newQuestion = new OldQuestion(text, questionAnswer.Split(',').ToList(), questionCorrectAnswer.Split(',').ToList(), Convert.ToInt32(point), Enum.Parse<Difficulty>(difficulty, true).ToString(), Enum.Parse<QuestionType>(questionType, true).ToString());
                     AppendNewQuestion(newQuestion);
                 }
                 if (answer.ToLower() == "delete")
@@ -55,7 +68,7 @@ namespace QuestionBankProject
                     WriteToConsole("Write question text");
                     var questionText = Console.ReadLine();
                     jsonData = System.IO.File.ReadAllText(FilePath());
-                    var questionList = JsonConvert.DeserializeObject<List<Question>>(jsonData) ?? new List<Question>();
+                    var questionList = JsonConvert.DeserializeObject<List<OldQuestion>>(jsonData) ?? new List<OldQuestion>();
 
                     foreach (var question in questionList.Where(x => x.QuestionText == questionText))
                     {
@@ -75,7 +88,7 @@ namespace QuestionBankProject
                 if (answer.ToLower() == "find")
                 {
                     jsonData = System.IO.File.ReadAllText(FilePath());
-                    var questionList = JsonConvert.DeserializeObject<List<Question>>(jsonData) ?? new List<Question>();
+                    var questionList = JsonConvert.DeserializeObject<List<OldQuestion>>(jsonData) ?? new List<OldQuestion>();
                     WriteToConsole("Write find choose (question text, question answer text, question correct answer, point, difficulty)");
                     var findChoice = Console.ReadLine();
                     if (findChoice.Trim().ToLower() == "questiontext")
@@ -126,7 +139,7 @@ namespace QuestionBankProject
                 }
                 if (answer.ToLower() == "exit")
                 {
-                    jsonData = JsonConvert.SerializeObject(new List<Question>());
+                    jsonData = JsonConvert.SerializeObject(new List<OldQuestion>());
                     System.IO.File.WriteAllText(FilePath(), jsonData);
                     Environment.Exit(0);
                 }
@@ -134,12 +147,12 @@ namespace QuestionBankProject
                 {
                     WriteToConsole("Write Exam Type (test, classic, mix)");
                     var examType = Console.ReadLine();
-                    var examQuestions = new List<Question>();
+                    var examQuestions = new List<OldQuestion>();
 
                     if (examType == "test")
                     {
                         jsonData = System.IO.File.ReadAllText(FilePath());
-                        var questionList = JsonConvert.DeserializeObject<List<Question>>(jsonData) ?? new List<Question>();
+                        var questionList = JsonConvert.DeserializeObject<List<OldQuestion>>(jsonData) ?? new List<OldQuestion>();
                         var point = 0;
                         foreach (var question in questionList.Where(x => x.QuestionType == QuestionType.MultipleChoice.ToString()))
                         {
@@ -154,7 +167,7 @@ namespace QuestionBankProject
                     else if (examType == "classic")
                     {
                         jsonData = System.IO.File.ReadAllText(FilePath());
-                        var questionList = JsonConvert.DeserializeObject<List<Question>>(jsonData) ?? new List<Question>();
+                        var questionList = JsonConvert.DeserializeObject<List<OldQuestion>>(jsonData) ?? new List<OldQuestion>();
                         var point = 0;
                         foreach (var question in questionList.Where(x => x.QuestionType == QuestionType.Classic.ToString()))
                         {
@@ -169,7 +182,7 @@ namespace QuestionBankProject
                     else if (examType == "mix")
                     {
                         jsonData = System.IO.File.ReadAllText(FilePath());
-                        var questionList = JsonConvert.DeserializeObject<List<Question>>(jsonData) ?? new List<Question>();
+                        var questionList = JsonConvert.DeserializeObject<List<OldQuestion>>(jsonData) ?? new List<OldQuestion>();
                         var point = 0;
                         foreach (var question in questionList.OrderBy(x => Guid.NewGuid()))
                         {
@@ -196,7 +209,7 @@ namespace QuestionBankProject
                 }
             } while (answer.ToLower() == "add" || answer.ToLower() == "find" || answer.ToLower() == "delete");
 
-            jsonData = JsonConvert.SerializeObject(new List<Question>());
+            jsonData = JsonConvert.SerializeObject(new List<OldQuestion>());
             System.IO.File.WriteAllText(FilePath(), jsonData);
             Environment.Exit(0);
 
@@ -207,10 +220,10 @@ namespace QuestionBankProject
                     Console.Write(System.Environment.NewLine);
             }
 
-            static void AppendNewQuestion(Question question)
+            static void AppendNewQuestion(OldQuestion question)
             {
                 var jsonData = System.IO.File.ReadAllText(FilePath());
-                var questionList = JsonConvert.DeserializeObject<List<Question>>(jsonData) ?? new List<Question>();
+                var questionList = JsonConvert.DeserializeObject<List<OldQuestion>>(jsonData) ?? new List<OldQuestion>();
                 questionList.Add(question);
                 jsonData = JsonConvert.SerializeObject(questionList);
                 System.IO.File.WriteAllText(FilePath(), jsonData);
