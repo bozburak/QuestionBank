@@ -10,6 +10,7 @@ namespace QuestionBankProject.Concrete.DesignPatterns
     internal class TrueFalseQuestion : IQuestion
     {
         public int Id { get; set; }
+
         public string QuestionText { get; set; }
         public List<string> Answers { get; set; }// List for multi gap filling
         public List<string> CorrectAnswers { get; set; }// List for multi gap filling and Multiple Choice
