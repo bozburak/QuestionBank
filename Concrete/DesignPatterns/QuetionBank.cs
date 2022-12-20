@@ -1,4 +1,6 @@
 ﻿using QuestionBankProject.Interfaces.DesignPatterns;
+using System;
+using System.Collections.Generic;
 
 namespace QuestionBankProject.Concrete.DesignPatterns
 {
@@ -6,12 +8,33 @@ namespace QuestionBankProject.Concrete.DesignPatterns
     {
         private int Sequence { get; set; }
 
+        private List<IQuestion> questionList = new List<IQuestion>();
+        private GenerateQuestionDifficultyStrategy generateStrategy;
+
+        public void SetGenerateStrategy(GenerateQuestionDifficultyStrategy generateStrategy)
+        {
+            this.generateStrategy = generateStrategy;
+        }
+
+        public void Add(IQuestion question)
+        {
+            questionList.Add(question);
+        }
+
+        // strategy and factory design pattern
+        public List<IQuestion> Generate()
+        {
+            QuestionGenerater creater = new QuestionGenerater();
+            return generateStrategy.Generate(questionList, creater);
+        }
+
         private QuestionBank()
         { }
 
         private static readonly object isLock = new object();
         private static QuestionBank instance = null;
 
+        // singleton
         public static QuestionBank Instance
         {
             get
